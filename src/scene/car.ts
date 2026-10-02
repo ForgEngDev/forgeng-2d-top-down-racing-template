@@ -1,11 +1,9 @@
 import { sprite2d } from "forgeng/2d";
 import { CAR, CAR_ENTITY, FALLBACK_TEXTURE, MATERIAL, WORLD } from "./ids";
-
-const START: readonly [number, number] = [-62, 71];
-const START_ANGLE = 0.22;
+import { START_ANGLE, START_POSITION } from "./track";
 
 export class Car {
-  private position: readonly [number, number] = START;
+  private position: readonly [number, number] = START_POSITION;
   private angle = START_ANGLE;
   private speed = 0;
 
@@ -24,7 +22,7 @@ export class Car {
     this.position = [this.position[0] + Math.cos(this.angle) * this.speed, this.position[1] + Math.sin(this.angle) * this.speed];
   }
 
-  public reset(position: readonly [number, number] = START, angle = START_ANGLE): void { this.position = position; this.angle = angle; this.speed = 0; }
+  public reset(position: readonly [number, number] = START_POSITION, angle = START_ANGLE): void { this.position = position; this.angle = angle; this.speed = 0; }
   public getPosition(): readonly [number, number] { return this.position; }
   public getAngle(): number { return this.angle; }
   public getSpeed(): number { return this.speed; }

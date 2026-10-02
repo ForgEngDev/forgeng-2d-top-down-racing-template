@@ -5,7 +5,7 @@ import { Controller, PlayerControls } from "./controller";
 import { Hud } from "./hud";
 import { CAR_ENTITY, SCENE_ID } from "./ids";
 import { createRenderDefinition } from "./render";
-import { isOnTrack } from "./track";
+import { isCheckpoint, isOnTrack } from "./track";
 
 export class MainScene {
   private readonly car = new Car();
@@ -66,16 +66,9 @@ export class MainScene {
   }
 
   private checkLapProgress(): void {
-    const [x, y] = this.car.getPosition();
-    const zones = [
-      x > 105 && y > 20,
-      x > 105 && y < -20,
-      x < -105 && y < -20,
-      x < -42 && x > -86 && y > 48,
-    ];
-    if (!zones[this.checkpoint]) return;
+    if (!isCheckpoint(this.car.getPosition(), this.checkpoint)) return;
     this.checkpoint += 1;
-    if (this.checkpoint < zones.length) return;
+    if (this.checkpoint < 4) return;
     this.lap += 1;
     this.bestLap = this.bestLap === null ? this.lapTime : Math.min(this.bestLap, this.lapTime);
     this.hud.notify(`Lap ${this.lap} — ${formatTime(this.lapTime)}`, 3000);
