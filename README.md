@@ -65,3 +65,8 @@ Documentation: [forgeng.dev](https://forgeng.dev)
 ## License
 
 See [LICENSE](./LICENSE). Template/game code is available for client-side game projects. The vendored ForgEng engine remains subject to the ForgeNG license; commercial engine use or installing the engine/SDK on other computers is not permitted without authorization.
+
+
+## Public API and AI coding assistants
+
+See the [ForgeNG public API repository](https://github.com/ForgEngDev/forgeng-api) for versioned TypeScript signatures, an API entry map, and [instructions for AI assistants](https://github.com/ForgEngDev/forgeng-api/blob/main/AGENTS.md). Give your assistant that link together with this game project. This template's pinned runtime and vendored declarations take precedence over a newer API snapshot. Start with one change and run `npm run build`, then check the game in a WebGPU browser.
