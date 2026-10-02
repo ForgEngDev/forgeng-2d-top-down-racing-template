@@ -61,7 +61,7 @@ export class Hud {
   public setRaceStatus(lap: number, lapTime: number, best: number | null, speed: number): void {
     this.ensureOverlay();
     if (this.lapEl) this.lapEl.innerHTML = `<strong>Lap ${lap + 1}</strong><span>${lapTime.toFixed(2)} s · Best ${best === null ? "—" : `${best.toFixed(2)} s`}</span>`;
-    if (this.speedEl) this.speedEl.textContent = `${Math.round(Math.abs(speed) * 42)} km/h`;
+    if (this.speedEl) this.speedEl.textContent = `${Math.round(Math.abs(speed) * 55)} km/h`;
   }
 
   public notify(message: string, durationMs = 2500): void {

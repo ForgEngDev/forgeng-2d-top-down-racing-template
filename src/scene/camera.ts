@@ -1,11 +1,11 @@
 import { camera2d } from "forgeng/2d";
 import { CAMERA, WORLD } from "./ids";
 
-/** Orthographic 2D camera: 320×180 pixel art with integer scaling. */
+/** Wider orthographic camera gives the car enough room to build speed. */
 export function createCamera() {
   return camera2d({
     id: CAMERA,
-    virtualSize: [320, 180],
+    virtualSize: [400, 225],
     scaleMode: "integer-fit",
     pixelSnap: "camera-and-items",
     sampling: "nearest",

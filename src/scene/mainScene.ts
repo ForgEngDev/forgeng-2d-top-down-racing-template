@@ -67,7 +67,12 @@ export class MainScene {
 
   private checkLapProgress(): void {
     const [x, y] = this.car.getPosition();
-    const zones = [x > 78 && y > 22, x > 78 && y < -22, x < -78 && y < -22, x < -60 && x > -95 && y > 32];
+    const zones = [
+      x > 105 && y > 20,
+      x > 105 && y < -20,
+      x < -105 && y < -20,
+      x < -42 && x > -86 && y > 48,
+    ];
     if (!zones[this.checkpoint]) return;
     this.checkpoint += 1;
     if (this.checkpoint < zones.length) return;
