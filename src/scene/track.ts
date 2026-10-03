@@ -51,7 +51,9 @@ export function createTrackSprites() {
     }
     const normal: readonly [number, number] = [-Math.sin(rotation), Math.cos(rotation)];
     const offset = ROAD_WIDTH / 2;
-    const edgeColor: Color = [0.82, 0.86, 0.79, 1];
+    const edgeColor: Color = Math.floor(index / 4) % 2 === 0
+      ? [0.92, 0.16, 0.14, 1]
+      : [0.96, 0.96, 0.91, 1];
     markings.push(part(`edge-a-${index}`, [length + 3, 2.2], [midpoint[0] + normal[0] * offset, midpoint[1] + normal[1] * offset], rotation, edgeColor));
     markings.push(part(`edge-b-${index}`, [length + 3, 2.2], [midpoint[0] - normal[0] * offset, midpoint[1] - normal[1] * offset], rotation, edgeColor));
   }
