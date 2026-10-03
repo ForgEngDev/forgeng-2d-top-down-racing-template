@@ -18,7 +18,7 @@ Open the local URL printed by Vite in a WebGPU-capable browser.
 ## Included
 
 - arcade acceleration, braking, reverse, friction, and speed-aware steering
-- large flowing circuit with kerbs, a start line, ordered checkpoints, lap time, and best lap
+- large flowing circuit with continuous edge lines, a start line, ordered checkpoints, lap time, and best lap
 - automatic off-track recovery and manual reset
 - 320×180 integer-fit camera
 - English controls panel and optional metrics (`?advanced=1`)

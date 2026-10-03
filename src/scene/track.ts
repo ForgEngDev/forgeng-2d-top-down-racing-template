@@ -6,10 +6,11 @@ const ROAD_TOLERANCE = 4;
 const SAMPLES_PER_CURVE = 10;
 
 const CONTROL_POINTS: ReadonlyArray<readonly [number, number]> = [
-  [-95, 72], [25, 70], [120, 50], [155, 15],
-  [145, -20], [100, -32], [75, -78], [10, -84],
-  [-35, -57], [-105, -62], [-158, -20], [-150, 25],
-  [-115, 48],
+  [0, 68], [115, 64], [155, 45],
+  [165, 15], [150, -5], [110, -15], [35, -15],
+  [-5, -18], [-35, -48], [-80, -72], [-130, -67],
+  [-158, -40], [-152, -10], [-120, 18], [-88, 38],
+  [-78, 58], [-30, 68],
 ];
 
 const TRACK_POINTS = sampleClosedCurve(CONTROL_POINTS, SAMPLES_PER_CURVE);
@@ -43,18 +44,16 @@ export function createTrackSprites() {
     const length = Math.hypot(dx, dy);
     const rotation = Math.atan2(dy, dx);
     const midpoint: readonly [number, number] = [(current[0] + next[0]) / 2, (current[1] + next[1]) / 2];
-    road.push(part(`road-${index}`, [length + 3, ROAD_WIDTH], midpoint, rotation, [0.18, 0.21, 0.26, 1]));
+    road.push(part(`road-${index}`, [length + 3, ROAD_WIDTH], midpoint, rotation, [0.17, 0.2, 0.25, 1]));
 
-    if (index % 8 === 0) {
+    if (index % 10 === 0) {
       markings.push(part(`lane-${index}`, [7.5, 1.4], midpoint, rotation, [0.86, 0.85, 0.72, 0.86]));
     }
-    if (index % 4 === 0) {
-      const normal: readonly [number, number] = [-Math.sin(rotation), Math.cos(rotation)];
-      const offset = ROAD_WIDTH / 2;
-      const curbColor: Color = Math.floor(index / 4) % 2 === 0 ? [0.93, 0.18, 0.15, 1] : [0.96, 0.96, 0.91, 1];
-      markings.push(part(`curb-a-${index}`, [length + 2, 3], [midpoint[0] + normal[0] * offset, midpoint[1] + normal[1] * offset], rotation, curbColor));
-      markings.push(part(`curb-b-${index}`, [length + 2, 3], [midpoint[0] - normal[0] * offset, midpoint[1] - normal[1] * offset], rotation, curbColor));
-    }
+    const normal: readonly [number, number] = [-Math.sin(rotation), Math.cos(rotation)];
+    const offset = ROAD_WIDTH / 2;
+    const edgeColor: Color = [0.82, 0.86, 0.79, 1];
+    markings.push(part(`edge-a-${index}`, [length + 3, 2.2], [midpoint[0] + normal[0] * offset, midpoint[1] + normal[1] * offset], rotation, edgeColor));
+    markings.push(part(`edge-b-${index}`, [length + 3, 2.2], [midpoint[0] - normal[0] * offset, midpoint[1] - normal[1] * offset], rotation, edgeColor));
   }
 
   addFinishLine(markings);
@@ -142,7 +141,7 @@ function addFinishLine(parts: Part[]): void {
 }
 
 function addScenery(parts: Part[]): void {
-  const trees: ReadonlyArray<readonly [number, number]> = [[-55, 2], [64, 17], [2, -4]];
+  const trees: ReadonlyArray<readonly [number, number]> = [[-70, -5], [75, 20], [4, 10]];
   trees.forEach(([x, y], index) => {
     parts.push(part(`tree-shadow-${index}`, [8, 8], [x + 2, y + 2], 0, [0.03, 0.16, 0.08, 0.58]));
     parts.push(part(`tree-${index}`, [7, 7], [x, y], Math.PI / 4, [0.19, 0.59, 0.29, 1]));
