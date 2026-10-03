@@ -4,6 +4,9 @@ import { FALLBACK_TEXTURE, MATERIAL, WORLD } from "./ids";
 const ROAD_WIDTH = 27;
 const ROAD_TOLERANCE = 4;
 const SAMPLES_PER_CURVE = 10;
+const KERB_WIDTH = 2.2;
+const TARGET_KERB_SECTION_LENGTH = 11;
+const KERB_JOIN_OVERLAP = 0.45;
 
 const CONTROL_POINTS: ReadonlyArray<readonly [number, number]> = [
   [0, 68], [115, 64], [155, 45],
@@ -49,15 +52,11 @@ export function createTrackSprites() {
     if (index % 10 === 0) {
       markings.push(part(`lane-${index}`, [7.5, 1.4], midpoint, rotation, [0.86, 0.85, 0.72, 0.86]));
     }
-    const normal: readonly [number, number] = [-Math.sin(rotation), Math.cos(rotation)];
-    const offset = ROAD_WIDTH / 2;
-    const edgeColor: Color = Math.floor(index / 4) % 2 === 0
-      ? [0.92, 0.16, 0.14, 1]
-      : [0.96, 0.96, 0.91, 1];
-    markings.push(part(`edge-a-${index}`, [length + 3, 2.2], [midpoint[0] + normal[0] * offset, midpoint[1] + normal[1] * offset], rotation, edgeColor));
-    markings.push(part(`edge-b-${index}`, [length + 3, 2.2], [midpoint[0] - normal[0] * offset, midpoint[1] - normal[1] * offset], rotation, edgeColor));
   }
 
+  const kerbOffset = ROAD_WIDTH / 2;
+  addKerbPath(markings, "edge-a", offsetClosedPath(TRACK_POINTS, kerbOffset));
+  addKerbPath(markings, "edge-b", offsetClosedPath(TRACK_POINTS, -kerbOffset));
   addFinishLine(markings);
   addScenery(markings);
   return [...background, ...road, ...markings].map((item) => sprite2d({
@@ -70,6 +69,72 @@ export function createTrackSprites() {
     tint: item.tint,
     transform: { position: item.position, rotation: item.rotation, scale: [1, 1] },
   }));
+}
+
+function offsetClosedPath(points: ReadonlyArray<readonly [number, number]>, offset: number): ReadonlyArray<readonly [number, number]> {
+  return points.map((point, index) => {
+    const previous = points[(index - 1 + points.length) % points.length]!;
+    const next = points[(index + 1) % points.length]!;
+    const tangentX = next[0] - previous[0];
+    const tangentY = next[1] - previous[1];
+    const tangentLength = Math.hypot(tangentX, tangentY) || 1;
+    const normalX = -tangentY / tangentLength;
+    const normalY = tangentX / tangentLength;
+    return [point[0] + normalX * offset, point[1] + normalY * offset] as const;
+  });
+}
+
+function addKerbPath(parts: Part[], id: string, points: ReadonlyArray<readonly [number, number]>): void {
+  const pathLength = closedPathLength(points);
+  const sectionCount = Math.max(2, Math.round(pathLength / (TARGET_KERB_SECTION_LENGTH * 2)) * 2);
+  const sectionLength = pathLength / sectionCount;
+  let travelled = 0;
+  let pieceIndex = 0;
+
+  for (let index = 0; index < points.length; index += 1) {
+    const start = points[index]!;
+    const end = points[(index + 1) % points.length]!;
+    const dx = end[0] - start[0];
+    const dy = end[1] - start[1];
+    const segmentLength = Math.hypot(dx, dy);
+    if (segmentLength < 0.0001) continue;
+
+    let segmentProgress = 0;
+    while (segmentProgress < segmentLength - 0.0001) {
+      const distanceOnPath = travelled + segmentProgress;
+      const sectionIndex = Math.min(sectionCount - 1, Math.floor((distanceOnPath + 0.0001) / sectionLength));
+      const distanceToColorChange = (sectionIndex + 1) * sectionLength - distanceOnPath;
+      const pieceLength = Math.min(segmentLength - segmentProgress, distanceToColorChange);
+      const midpointDistance = segmentProgress + pieceLength / 2;
+      const midpoint: readonly [number, number] = [
+        start[0] + dx * (midpointDistance / segmentLength),
+        start[1] + dy * (midpointDistance / segmentLength),
+      ];
+      const color: Color = sectionIndex % 2 === 0
+        ? [0.92, 0.16, 0.14, 1]
+        : [0.96, 0.96, 0.91, 1];
+      parts.push(part(
+        `${id}-${pieceIndex}`,
+        [pieceLength + KERB_JOIN_OVERLAP, KERB_WIDTH],
+        midpoint,
+        Math.atan2(dy, dx),
+        color,
+      ));
+      pieceIndex += 1;
+      segmentProgress += pieceLength;
+    }
+    travelled += segmentLength;
+  }
+}
+
+function closedPathLength(points: ReadonlyArray<readonly [number, number]>): number {
+  let length = 0;
+  for (let index = 0; index < points.length; index += 1) {
+    const current = points[index]!;
+    const next = points[(index + 1) % points.length]!;
+    length += Math.hypot(next[0] - current[0], next[1] - current[1]);
+  }
+  return length;
 }
 
 export function isOnTrack(position: readonly [number, number]): boolean {
