@@ -1,12 +1,12 @@
 import { camera2d } from "forgeng/2d";
 import { CAMERA, WORLD } from "./ids";
 
-/** Wider orthographic camera gives the car enough room to build speed. */
+/** Cover the browser viewport while preserving the world's aspect ratio. */
 export function createCamera() {
   return camera2d({
     id: CAMERA,
     virtualSize: [400, 225],
-    scaleMode: "integer-fit",
+    scaleMode: "fill",
     pixelSnap: "camera-and-items",
     sampling: "nearest",
     layers: [WORLD],

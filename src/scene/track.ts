@@ -33,7 +33,7 @@ interface Part {
 
 export function createTrackSprites() {
   const background: Part[] = [
-    part("grass", [398, 223], [0, 0], 0, [0.07, 0.32, 0.19, 1]),
+    part("grass", [640, 360], [0, 0], 0, [0.07, 0.32, 0.19, 1]),
     part("pond", [43, 22], [20, 8], -0.2, [0.07, 0.34, 0.5, 1]),
   ];
   const road: Part[] = [];
